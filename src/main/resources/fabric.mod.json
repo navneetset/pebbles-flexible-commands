@@ -3,13 +3,13 @@
 	"id": "pebbles-flexible-commands",
 	"version": "${version}",
 	"name": "Pebble's Flexible Commands",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Highly customizable Minecraft server mod designed to empower server administrators with the ability to create and manage dynamic and info-based commands. Whether you want to automate repetitive tasks, provide interactive player experiences, or simplify admin workflows, this mod gives you the flexibility to configure commands to suit your needs.",
 	"authors": [
-		"Me!"
+		"lilpebs"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://modrinth.com/mod/pebbles-flexible-commands",
+		"sources": "https://github.com/navneetset/pebbles-flexible-commands"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/pebbles-flexible-commands/icon.png",
