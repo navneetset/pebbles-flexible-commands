@@ -1,5 +1,7 @@
 # Pebble's Flexible Commands Mod
 
+### Web Editor for configuration help: [Web Editor](https://fce.sethi.tech/)
+
 Pebble's Flexible Commands Mod is a highly customizable Minecraft server mod designed to empower server administrators with the ability to create and manage dynamic and info-based commands. Whether you want to automate repetitive tasks, provide interactive player experiences, or simplify admin workflows, this mod gives you the flexibility to configure commands to suit your needs.
 
 ---
