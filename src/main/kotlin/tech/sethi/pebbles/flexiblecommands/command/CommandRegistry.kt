@@ -133,6 +133,10 @@ object CommandRegistry {
 
             when {
                 key == "baseCommand" -> command.baseCommand
+                key == "executor" -> {
+                    val player = source.player
+                    if (player != null) player.name.string else ""
+                }
                 key.startsWith("custom:") -> {
                     val parts = key.removePrefix("custom:").split(":")
                     val logicKey = parts[0]
