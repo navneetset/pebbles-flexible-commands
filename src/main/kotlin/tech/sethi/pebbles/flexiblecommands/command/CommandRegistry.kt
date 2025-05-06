@@ -34,9 +34,12 @@ object CommandRegistry {
 
         infoCommands.forEach { infoCommand ->
             infoCommand.aliases.forEach { alias ->
-                val command = literal(alias)
-                    .requires { source -> PermUtil.commandRequiresPermission(source, infoCommand.permission) }
-                    .executes {
+                val command = literal(alias).requires { source ->
+                        PermUtil.commandRequiresPermission(
+                            source,
+                            infoCommand.permission
+                        )
+                    }.executes {
                         val source = it.source
                         source.sendFeedback({ PM.returnStyledText(infoCommand.message) }, false)
                         1
@@ -47,8 +50,8 @@ object CommandRegistry {
     }
 
     private fun buildCommand(command: ConfigHandler.CommandConfig): LiteralArgumentBuilder<ServerCommandSource> {
-        val rootBuilder = literal(command.alias)
-            .requires { source -> PermUtil.commandRequiresPermission(source, command.permission) }
+        val rootBuilder =
+            literal(command.alias).requires { source -> PermUtil.commandRequiresPermission(source, command.permission) }
 
         val argumentChain = buildArgumentChain(command)
         if (argumentChain != null) {
@@ -104,8 +107,7 @@ object CommandRegistry {
     }
 
     private fun executeCommand(
-        context: CommandContext<ServerCommandSource>,
-        command: ConfigHandler.CommandConfig
+        context: CommandContext<ServerCommandSource>, command: ConfigHandler.CommandConfig
     ): Int {
         val source = context.source
         val inputArgs = mutableMapOf<String, String>()
@@ -133,6 +135,7 @@ object CommandRegistry {
 
             when {
                 key == "baseCommand" -> command.baseCommand
+                key == "executor" -> source.player?.name?.string ?: "CONSOLE"
                 key.startsWith("custom:") -> {
                     val parts = key.removePrefix("custom:").split(":")
                     val logicKey = parts[0]
@@ -145,6 +148,7 @@ object CommandRegistry {
                         else -> throw IllegalStateException("Invalid custom logic key or index: $key")
                     }
                 }
+
                 inputArgs.containsKey(key) -> inputArgs[key]!!
                 else -> throw IllegalStateException("Missing argument: $key")
             }
@@ -156,6 +160,7 @@ object CommandRegistry {
                 val player = source.player ?: throw IllegalStateException("Player required for 'player' runAs type")
                 PM.runCommandAsPlayer(player, finalCommand)
             }
+
             else -> throw IllegalArgumentException("Unsupported runAs type: ${command.runAs}")
         }
 
@@ -164,10 +169,18 @@ object CommandRegistry {
     }
 
 
-
-
     private fun processCustomLogic(type: String, params: Map<String, Any>): Any {
         return when (type.lowercase()) {
+            "loop" -> {
+                // Expects a numeric parameter "count" and a string parameter "command"
+                val count = (params["count"] as? Double)?.toInt()
+                    ?: throw IllegalArgumentException("Loop logic requires a numeric 'count' parameter")
+                val commandLine = params["command"] as? String
+                    ?: throw IllegalArgumentException("Loop logic requires a 'command' parameter")
+                // Repeat the commandLine 'count' times, separated by newline characters
+                (1..count).joinToString(separator = "\n") { commandLine }
+            }
+
             "guaranteedmaxivs" -> {
                 val numMaxIvs = (params["numMaxIvs"] as? Double)?.toInt() ?: 3
                 val maxValue = (params["maxValue"] as? Double)?.toInt() ?: 31
@@ -209,7 +222,8 @@ object CommandRegistry {
             }
 
             "randomstringlist" -> {
-                val list = params["list"] as? List<*> ?: throw IllegalArgumentException("Missing or invalid list parameter")
+                val list =
+                    params["list"] as? List<*> ?: throw IllegalArgumentException("Missing or invalid list parameter")
                 if (list.isEmpty()) throw IllegalArgumentException("List parameter for randomstringlist cannot be empty")
                 list.random().toString()
             }
@@ -217,10 +231,5 @@ object CommandRegistry {
             else -> throw IllegalArgumentException("Unsupported custom logic type: $type")
         }
     }
-
-
-
-
-
 
 }

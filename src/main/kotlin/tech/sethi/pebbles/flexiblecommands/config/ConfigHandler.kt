@@ -61,6 +61,7 @@ object ConfigHandler {
     data class CommandConfig(
         val alias: String,                          // Command alias (e.g., "givepoke")
         val runAs: String = "console",              // Command to run as ("console", "player")
+//        val commandCooldownSeconds: Int? = 0,       // Cooldown in seconds for player commands
         val baseCommand: String,                    // The base command to execute (e.g., "pokegiveother")
         val permission: String,                     // Permission string (e.g., "flexiblecommands.command.givepoke")
         val template: String,                       // Template string for the final command

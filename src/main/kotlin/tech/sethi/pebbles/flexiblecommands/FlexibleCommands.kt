@@ -21,6 +21,10 @@ object FlexibleCommands : ModInitializer {
 
 		ServerLifecycleEvents.SERVER_STARTED.register { server ->
 			this.server = server
+
+			val dispatcher = server.commandSource.dispatcher
+			CommandRegistry.registerAliases(dispatcher)
+			CommandRegistry.registerInfoCommands(dispatcher)
 		}
 	}
 }
