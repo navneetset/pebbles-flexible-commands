@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.minecraft.server.MinecraftServer
 import org.slf4j.LoggerFactory
 import tech.sethi.pebbles.flexiblecommands.command.CommandRegistry
+import tech.sethi.pebbles.flexiblecommands.util.CooldownManager
 
 object FlexibleCommands : ModInitializer {
     private val logger = LoggerFactory.getLogger("pebbles-flexible-commands")
@@ -25,6 +26,12 @@ object FlexibleCommands : ModInitializer {
 			val dispatcher = server.commandSource.dispatcher
 			CommandRegistry.registerAliases(dispatcher)
 			CommandRegistry.registerInfoCommands(dispatcher)
+		}
+		
+		// Register server stopping event to save cooldowns
+		ServerLifecycleEvents.SERVER_STOPPING.register { 
+			logger.info("Shutting down cooldown manager...")
+			CooldownManager.shutdown()
 		}
 	}
 }

@@ -13,6 +13,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder
 import net.minecraft.command.argument.EntityArgumentType
 import net.minecraft.server.command.ServerCommandSource
 import tech.sethi.pebbles.flexiblecommands.FlexibleCommands.server
+import tech.sethi.pebbles.flexiblecommands.util.CooldownManager
 import tech.sethi.pebbles.flexiblecommands.util.PM
 import tech.sethi.pebbles.flexiblecommands.util.PermUtil
 
@@ -111,6 +112,17 @@ object CommandRegistry {
     ): Int {
         val source = context.source
         val inputArgs = mutableMapOf<String, String>()
+        
+        // Check cooldown if we have a player executing the command
+        val player = source.player
+        if (player != null && command.cooldownSeconds > 0) {
+            if (CooldownManager.isOnCooldown(player, command.alias)) {
+                val remainingSeconds = CooldownManager.getRemainingCooldown(player, command.alias)
+                val cooldownMessage = command.cooldownMessage.replace("{remaining}", remainingSeconds.toString())
+                source.sendFeedback({ PM.returnStyledText(cooldownMessage) }, false)
+                return 0
+            }
+        }
 
         command.arguments.forEach { arg ->
             val value = try {
@@ -126,7 +138,7 @@ object CommandRegistry {
             }
         }
 
-        val customValues = command.customLogic.mapValues { (key, logic) ->
+        val customValues = command.customLogic.mapValues { (_, logic) ->
             processCustomLogic(logic.type, logic.params)
         }
 
@@ -157,11 +169,15 @@ object CommandRegistry {
         when (command.runAs) {
             "console" -> PM.runCommand(finalCommand)
             "player" -> {
-                val player = source.player ?: throw IllegalStateException("Player required for 'player' runAs type")
-                PM.runCommandAsPlayer(player, finalCommand)
+                val executor = source.player ?: throw IllegalStateException("Player required for 'player' runAs type")
+                PM.runCommandAsPlayer(executor, finalCommand)
             }
-
             else -> throw IllegalArgumentException("Unsupported runAs type: ${command.runAs}")
+        }
+        
+        // Set cooldown after successful execution
+        if (player != null && command.cooldownSeconds > 0) {
+            CooldownManager.setCooldown(player, command.alias, command.cooldownSeconds)
         }
 
         println("Pebble's Flexible Command Executed: $finalCommand")

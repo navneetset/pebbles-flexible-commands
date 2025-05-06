@@ -10,6 +10,7 @@ Pebble's Flexible Commands Mod is a highly customizable Minecraft server mod des
 
 - **Dynamic Commands:** Define powerful commands with arguments, custom logic, and variable templates.
 - **Info Commands:** Set up simple text-based commands to share important information like server links or tips.
+- **Command Cooldowns:** Set time limits between command uses with persistent cooldowns that survive server restarts.
 - **Custom Logic Support:**
   - Generate random values (e.g., numbers, items, players).
   - Create advanced logic such as guaranteed maximum IVs for Pokémon mods.
@@ -25,6 +26,7 @@ Pebble's Flexible Commands Mod is a highly customizable Minecraft server mod des
 - Fully customizable: No hardcoding required, everything is configured via JSON.
 - Enhance player engagement with randomized rewards and dynamic logic.
 - Reduce admin overhead by automating repetitive tasks.
+- Prevent command abuse with configurable cooldowns.
 
 ---
 
@@ -36,6 +38,25 @@ Pebble's Flexible Commands Mod is a highly customizable Minecraft server mod des
 
 
 Check out the [Wiki](https://github.com/navneetset/pebbles-flexible-commands/wiki) for detailed configuration guides, examples, and troubleshooting.
+
+---
+
+## **Command Cooldowns**
+
+You can now set cooldowns on commands to limit how frequently they can be used:
+
+```json
+{
+  "alias": "kitdaily",
+  "cooldownSeconds": 86400,
+  "cooldownMessage": "<red>You can only use this once per day! Wait <yellow>{remaining}</yellow> seconds."
+  // other command properties...
+}
+```
+
+- **cooldownSeconds**: Time in seconds before the command can be used again by the same player
+- **cooldownMessage**: Message shown when on cooldown (use {remaining} to show seconds left)
+- Cooldowns persist between server restarts
 
 ---
 

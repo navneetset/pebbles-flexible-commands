@@ -3,94 +3,113 @@ package tech.sethi.pebbles.flexiblecommands.config
 import tech.sethi.pebbles.flexiblecommands.config.ConfigHandler.CommandArgument
 import tech.sethi.pebbles.flexiblecommands.config.ConfigHandler.CommandConfig
 import tech.sethi.pebbles.flexiblecommands.config.ConfigHandler.InfoCommandConfig
+import tech.sethi.pebbles.flexiblecommands.config.ConfigHandler.LogicConfig
 
 val givePokeCommand = CommandConfig(
     alias = "givepoke",
+    runAs = "console",
+    cooldownSeconds = 60, // 1 minute cooldown
+    cooldownMessage = "<red>You must wait {remaining} seconds before using this command again!",
     baseCommand = "pokegiveother",
     permission = "flexiblecommands.command.givepoke",
-    template = "{baseCommand} {player} {pokemon} shiny={shiny} galarian={galarian} speed_iv={custom:ivs:0} attack_iv={custom:ivs:1} special_attack_iv={custom:ivs:2} special_defence_iv={custom:ivs:3} defence_iv={custom:ivs:4} hp_iv={custom:ivs:5}",
+    template = "{baseCommand} {player} {pokemon}",
     arguments = listOf(
-        CommandArgument(name = "player", type = "player"),
-        CommandArgument(name = "pokemon", type = "string"),
-        CommandArgument(name = "shiny", type = "choice", choices = listOf("true", "false")),
-        CommandArgument(name = "galarian", type = "choice", choices = listOf("true", "false"))
-    ),
-    customLogic = mapOf(
-        "ivs" to ConfigHandler.LogicConfig(
-            type = "guaranteedmaxivs",
-            params = mapOf(
-                "numMaxIvs" to 3,
-                "maxValue" to 31,
-                "randomRange" to listOf(0, 31)
-            )
+        CommandArgument(
+            name = "player",
+            type = "player"
+        ),
+        CommandArgument(
+            name = "pokemon",
+            type = "choice",
+            choices = listOf("pikachu", "eevee", "charizard", "bulbasaur", "squirtle")
         )
-    )
+    ),
+    customLogic = emptyMap()
 )
-
 
 val exampleCommand = CommandConfig(
     alias = "example",
-    baseCommand = "say",
+    runAs = "console",
+    baseCommand = "give",
     permission = "flexiblecommands.command.example",
-    template = "{baseCommand} Hello {player}!",
+    template = "{baseCommand} {player} minecraft:diamond {count}",
     arguments = listOf(
-        CommandArgument(name = "player", type = "player")
-    )
+        CommandArgument(
+            name = "player",
+            type = "player"
+        ),
+        CommandArgument(
+            name = "count",
+            type = "int"
+        )
+    ),
+    customLogic = emptyMap()
 )
 
 val giveRandomDiamondsCommand = CommandConfig(
-    alias = "giverandomdiamonds",
+    alias = "randomdiamonds",
+    runAs = "console",
     baseCommand = "give",
-    permission = "flexiblecommands.command.giverandomdiamonds",
-    template = "{baseCommand} {player} minecraft:diamond {custom:randomamount}",
+    permission = "flexiblecommands.command.randomdiamonds",
+    template = "{baseCommand} {player} minecraft:diamond {custom:randomnumber}",
     arguments = listOf(
-        CommandArgument(name = "player", type = "player")
+        CommandArgument(
+            name = "player",
+            type = "player"
+        )
     ),
     customLogic = mapOf(
-        "randomamount" to ConfigHandler.LogicConfig(
+        "randomnumber" to LogicConfig(
             type = "randomnumberrange",
             params = mapOf(
-                "min" to 1,
-                "max" to 64
+                "min" to 1.0,
+                "max" to 64.0
             )
         )
     )
 )
 
 val giveRandomDiamondsRandomCommand = CommandConfig(
-    alias = "giverandomdiamondsrandom",
+    alias = "randomdiamondsrandom",
+    runAs = "console",
     baseCommand = "give",
-    permission = "flexiblecommands.command.giverandomdiamondsrandom",
-    template = "{baseCommand} {custom:randomplayer} minecraft:diamond {custom:randomamount}",
-    arguments = listOf(), // No arguments needed for this command
+    permission = "flexiblecommands.command.randomdiamondsrandom",
+    template = "{baseCommand} {custom:randomplayername} minecraft:diamond {custom:randomnumber}",
+    arguments = listOf(),
     customLogic = mapOf(
-        "randomplayer" to ConfigHandler.LogicConfig(
-            type = "randomplayer",
-            params = emptyMap() // No parameters needed for randomplayer
-        ),
-        "randomamount" to ConfigHandler.LogicConfig(
+        "randomnumber" to LogicConfig(
             type = "randomnumberrange",
             params = mapOf(
-                "min" to 1,
-                "max" to 64
+                "min" to 1.0,
+                "max" to 64.0
             )
+        ),
+        "randomplayername" to LogicConfig(
+            type = "randomplayer",
+            params = mapOf()
         )
     )
 )
 
 val givePokeRandomCommand = CommandConfig(
-    alias = "givepokerandom",
+    alias = "giverandom",
+    runAs = "console",
+    cooldownSeconds = 300, // 5 minute cooldown
+    cooldownMessage = "<red>This command is on cooldown! Try again in {remaining} seconds.",
     baseCommand = "pokegiveother",
-    permission = "flexiblecommands.command.givepokerandom",
+    permission = "flexiblecommands.command.giverandom",
     template = "{baseCommand} {player} {custom:randompokemon}",
     arguments = listOf(
-        CommandArgument(name = "player", type = "player")
+        CommandArgument(
+            name = "player",
+            type = "player"
+        )
     ),
     customLogic = mapOf(
-        "randompokemon" to ConfigHandler.LogicConfig(
+        "randompokemon" to LogicConfig(
             type = "randomstringlist",
             params = mapOf(
-                "list" to listOf("bulbasaur", "charmander", "squirtle", "pikachu", "jigglypuff", "meowth")
+                "list" to listOf("pikachu", "eevee", "charizard", "bulbasaur", "squirtle")
             )
         )
     )
